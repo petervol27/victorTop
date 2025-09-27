@@ -1,0 +1,117 @@
+/* --- Responsive mobile grid --- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  padding: 12px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Tile button (better tap behavior than plain <img>) */
+.gallery-item {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1; /* tidy squares on the grid */
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+
+/* --- Fullscreen lightbox --- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  touch-action: pan-y; /* allow vertical scroll gestures to be ignored */
+}
+
+.lightbox-img {
+  max-width: 100vw;
+  max-height: 100dvh; /* avoids iOS address bar drama */
+  object-fit: contain;
+}
+
+/* Navigation buttons */
+.lb-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 999px;
+  border: 0;
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 28px;
+  line-height: 44px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lb-prev {
+  inset-inline-start: 8px;
+}
+.lb-next {
+  inset-inline-end: 8px;
+}
+
+.lb-btn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Close button */
+.lb-close {
+  position: fixed;
+  inset-block-start: env(safe-area-inset-top, 0);
+  inset-inline-end: 8px;
+  border: 0;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.lb-counter {
+  position: fixed;
+  inset-block-end: calc(8px + env(safe-area-inset-bottom, 0));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* Tiny phones tweaks */
+@media (max-width: 360px) {
+  .gallery-grid {
+    gap: 6px;
+    padding: 10px;
+  }
+  .lb-btn {
+    inline-size: 40px;
+    block-size: 40px;
+    font-size: 24px;
+  }
+}

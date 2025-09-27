@@ -1,73 +1,142 @@
-/* Hard edge-to-edge: no horizontal bleed/whitespace anywhere */
-html,
-body,
-#root,
-.app {
-  width: 100%;
-  min-width: 0;
-  overflow-x: hidden;
+/* ========== RESET / BASE ========== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  word-break: break-word;
 }
 
-/* ---- Navbar ---- */
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: clip; /* no horizontal scroll, ever */
+}
+
+body {
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Colors */
+:root {
+  --main-grey: #333132;
+  --main-yellow: #fbcd08;
+  --bg: #ffffff;
+  --fg: var(--main-grey);
+}
+
+/* ========== APP FRAME ========== */
+.app {
+  min-height: 100dvh; /* dynamic mobile viewport */
+  min-height: 100svh; /* iOS small viewport */
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column; /* navbar on top, content below */
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x: clip;
+}
+
+/* ========== NAVBAR (in normal flow, no overlap) ========== */
 .navbar-custom {
-  position: sticky;
-  top: env(safe-area-inset-top, 0);
+  position: relative; /* not sticky/fixed; participates in flow */
+  flex-shrink: 0; /* don’t collapse when content grows */
   z-index: 10;
   background-color: var(--main-grey);
   color: #fff;
-  /* remove side padding, keep only vertical */
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0));
   width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* vertical padding only; no side padding so it hugs edges */
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0));
 }
 
-/* Center the content without adding side padding */
+/* Logo */
+.logo {
+  margin: 0 0 6px 0;
+  font-size: clamp(18px, 4vw, 22px);
+  line-height: 1;
+  text-align: center;
+}
+
+/* --- NAV LINKS: single row, spaced evenly, edge-to-edge --- */
 .nav-links {
-  display: flex;
-  justify-content: center;
-  gap: clamp(0.6rem, 3vw, 1.2rem);
-  flex-wrap: wrap;
+  display: flex !important;
+  flex-wrap: nowrap; /* force one line */
+  justify-content: space-evenly; /* evenly spaced across full width */
+  align-items: center;
   width: 100%;
-  margin: 0; /* no stray margins */
-  padding: 0; /* no side padding */
+  min-width: 0; /* allow shrink inside flex row */
+  margin: 0;
+  padding: 0;
+  background-color: var(--main-grey);
+  overflow: hidden; /* no accidental spill on tiny screens */
 }
 
-/* Individual link – keep tap target, no extra outer spacing */
+/* Individual link */
 .nav-link-custom {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  color: var(--main-yellow);
-  text-decoration: none;
-  font-size: clamp(14px, 3.8vw, 16px);
-  line-height: 1;
+
+  flex: 1 1 0; /* share row evenly, allow shrink */
+  min-width: 0; /* prevents overflow when labels are long */
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 8px 10px; /* internal only, no external gaps */
-  border-radius: 10px;
+  justify-content: center;
+
+  white-space: nowrap; /* keep label on one line */
+  text-align: center;
+  text-decoration: none;
+  color: var(--main-yellow);
+
+  font-size: clamp(13px, 3.8vw, 16px);
+  line-height: 1;
+  padding: 10px 0; /* vertical pad only; no side padding */
+  border-radius: 10px; /* visual nicety on hover/active bg */
   transition: transform 0.05s ease, background-color 0.15s ease;
 }
 
-/* ---- Content area ---- */
+.nav-link-custom:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-link-custom:active {
+  transform: translateY(1px);
+}
+
+/* Active page (NavLink gives aria-current="page") */
+.nav-link-custom[aria-current='page'] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* ========== CONTENT (never underlaps navbar) ========== */
 .content-container {
-  flex: 1;
+  flex: 1; /* fill remaining viewport */
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* zero side padding to grab full width */
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 0;
-  /* keep safe bottom only if you want it; otherwise also 0 */
   padding-bottom: env(safe-area-inset-bottom, 0);
 
   text-align: center;
   background: var(--bg);
   color: var(--fg);
-  min-height: 0;
-  width: 100%;
+  min-height: 0; /* avoids iOS URL bar jump gaps */
 }
 
-/* Kill default heading margins that can create phantom gaps */
+/* ========== TYPOGRAPHY ========== */
 h1,
 h2,
 h3,
@@ -75,11 +144,24 @@ h4,
 p {
   margin: 0;
 }
+h1 {
+  font-size: clamp(20px, 6vw, 28px);
+}
 
-/* Optional: tiny phones */
+/* ========== MEDIA SAFEGUARDS ========== */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ========== TINY PHONES TWEAKS ========== */
 @media (max-width: 360px) {
   .nav-link-custom {
-    font-size: clamp(13px, 3.6vw, 15px);
-    padding: 8px 8px;
+    font-size: clamp(12px, 3.6vw, 14px);
+    padding: 8px 0;
   }
 }
