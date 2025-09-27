@@ -1,35 +1,11 @@
-/* ---- Reset / base ---- */
-* {
-  box-sizing: border-box;
-}
+/* Hard edge-to-edge: no horizontal bleed/whitespace anywhere */
 html,
 body,
-#root {
-  height: 100%;
-}
-body {
-  margin: 0;
-  overscroll-behavior-y: none;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Colors */
-:root {
-  --main-grey: #333132;
-  --main-yellow: #fbcd08;
-  --bg: #ffffff;
-  --fg: var(--main-grey);
-}
-
-/* The mobile-first app frame fills the actual device viewport */
+#root,
 .app {
-  /* modern mobile-safe viewport units */
-  min-height: 100dvh; /* dynamic viewport height */
-  min-height: 100svh; /* small viewport height (iOS) */
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  color: var(--fg);
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 /* ---- Navbar ---- */
@@ -39,99 +15,71 @@ body {
   z-index: 10;
   background-color: var(--main-grey);
   color: #fff;
-  /* pad for notches and bottom bars */
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0));
+  /* remove side padding, keep only vertical */
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0));
   width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.logo {
-  margin: 0 0 6px 0;
-  font-size: clamp(18px, 4vw, 22px);
-  line-height: 1;
-}
-
-/* Links row */
+/* Center the content without adding side padding */
 .nav-links {
   display: flex;
   justify-content: center;
   gap: clamp(0.6rem, 3vw, 1.2rem);
-  flex-wrap: wrap; /* wraps gracefully on tiny screens */
+  flex-wrap: wrap;
   width: 100%;
+  margin: 0; /* no stray margins */
+  padding: 0; /* no side padding */
 }
 
-/* Individual link */
+/* Individual link – keep tap target, no extra outer spacing */
 .nav-link-custom {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-
-  color: #ffffff;
+  color: var(--main-yellow);
   text-decoration: none;
   font-size: clamp(14px, 3.8vw, 16px);
   line-height: 1;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 6px 8px;
+  padding: 8px 10px; /* internal only, no external gaps */
   border-radius: 10px;
   transition: transform 0.05s ease, background-color 0.15s ease;
 }
 
-.nav-link-custom:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-.nav-link-custom:active {
-  transform: translateY(1px);
-}
-
-/* Caret icon inside the link, not on the link itself */
-.caret {
-  font-size: 0.75em;
-  color: var(--main-yellow);
-}
-
-/* Active page (NavLink gives aria-current="page") */
-.nav-link-custom[aria-current='page'] {
-  background: rgba(255, 255, 255, 0.1);
-}
-
 /* ---- Content area ---- */
 .content-container {
-  /* Flex 1 makes it expand to fill leftover space = no white bars */
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* General mobile padding + safe-bottom */
-  padding: 16px;
-  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+  /* zero side padding to grab full width */
+  padding: 0;
+  /* keep safe bottom only if you want it; otherwise also 0 */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 
   text-align: center;
   background: var(--bg);
   color: var(--fg);
-  /* Prevents phantom gaps on iOS when the URL bar collapses/expands */
   min-height: 0;
+  width: 100%;
 }
 
-/* ---- Tiny phones first ---- */
+/* Kill default heading margins that can create phantom gaps */
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+/* Optional: tiny phones */
 @media (max-width: 360px) {
   .nav-link-custom {
     font-size: clamp(13px, 3.6vw, 15px);
-    padding: 6px 6px;
+    padding: 8px 8px;
   }
-}
-
-/* ---- Slightly larger phones ---- */
-@media (min-width: 361px) and (max-width: 430px) {
-  .nav-link-custom {
-    font-size: clamp(14px, 3.5vw, 16px);
-  }
-}
-
-/* Optional: make h1 look sane on mobile pages */
-h1 {
-  font-size: clamp(20px, 6vw, 28px);
-  margin: 0;
 }
